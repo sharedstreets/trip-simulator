@@ -1,0 +1,21 @@
+{
+  "name": "tlc-fhv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mapbox/polyline": "^1.0.0",
+    "@turf/turf": "^5.1.6",
+    "byline": "^5.0.0",
+    "canvas": "^2.3.1",
+    "moment": "^2.24.0",
+    "osrm": "^5.22.0",
+    "random": "^2.0.13",
+    "through2": "^3.0.0"
+  }
+}
