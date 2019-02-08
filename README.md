@@ -22,6 +22,15 @@ In addition to the distribution used to vary the gap between each update, an add
 
 Like frequency, locational drift is also simulated per update with an overall per trip bias, both generated through selecting a random point over a gaussian distribution. The mean locational horizontal accuracy is set to 10 meters, which roughly approximates the maximum accuracy in modern phone hardware, with a moderately aggressive app configuration. Locational accuracy does not currently take urban canyons into account, but this could be simulated in the future.
 
+### Preview
+
+Below are images of sparse telemetry zoomed in to give an idea of what to expect in terms of noise fidelity. Most of the standard patterns seen in real world data emerge from the gaussian model, including cuts across city blocks where low frequency data is present, as well as tightly packed groups of pings where stationary data is present.
+
+![](https://i.imgur.com/GCbMBiG.jpg)
+*Lower Manhattan / World Trade Center*
+![](https://i.imgur.com/CmDSxb1.jpg)
+*Central Park / Hell's Kitchen / Midtown*
+
 ## Install
 
 `trip-simulator` processes data in Node.js, with routing powered by OSRM C++ bindings. The OSRM configuration is targeted at car travel, but could be modified to simulate pedestrian, biking behavior, as needed.
