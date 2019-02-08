@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "prettier --check --write *.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,5 +18,8 @@
     "osrm": "^5.22.0",
     "random": "^2.0.13",
     "through2": "^3.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^1.16.4"
   }
 }
