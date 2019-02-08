@@ -30,6 +30,10 @@ Like frequency, locational drift is also simulated per update with an overall pe
 npm install
 ```
 
+## Format
+
+Data is output as GeoJSON LineString Features, with an array property called `timestamps`. `timestamps` are an ordered list of simulated date times that correspond to the spatial coordinates provided in the standard GeoJSON geometry format.
+
 ## Use
 
 ```sh
@@ -46,9 +50,49 @@ Running make will perform the following sequential operations:
 
 Expect this process to take a couple hours, between data downloads, contraction, and path generation.
 
-## Format
+### Steps
 
-Data is output as GeoJSON LineString Features, with an array property called `timestamps`. `timestamps` are an ordered list of simulated date times that correspond to the spatial coordinates provided in the standard GeoJSON geometry format.
+Below are the individual steps of the Makefile, useful when modifying configuration without starting from scratch.
+
+#### trips.csv
+
+Downloads OD data from NYC TLC endpoint.
+
+```sh
+make trips.csv
+```
+
+#### nyc.osm.pbf
+
+Downloads New York state OSM extract from Geofrabrik
+
+```sh
+make nyc.osm.pbf
+```
+
+#### nyc.osrm
+
+Builds OSRM database and contracts edges for optimal routing performance.
+
+```sh
+make nyc.osrm
+```
+
+#### traces.json
+
+Generates GeoJSON file of path simulation data.
+
+```sh
+make traces.json
+```
+
+#### traces-seq.json
+
+Generates line delimited GeoJSON file of path simulation data. This step is not run by default.
+
+```sh
+make traces-seq.json
+```
 
 ## License
 

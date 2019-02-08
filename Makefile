@@ -1,4 +1,4 @@
-all: clean data trips.csv nyc.osm.pbf nyc.osrm traces.json
+all: data trips.csv nyc.osm.pbf nyc.osrm traces.json
 
 clean:
 	rm -rf ./data
@@ -17,7 +17,7 @@ nyc.osrm:
 	./node_modules/osrm/lib/binding/osrm-contract ./data/nyc.osrm
 
 traces.json:
-	cat trips.csv | node index.js | node wrap.js > ./data/traces.json
+	cat ./data/trips.csv | node index.js | node wrap.js > ./data/traces.json
 
 traces-seq.json:
-	cat trips.csv | node index.js > ./data/traces.json
+	cat ./data/trips.csv | node index.js > ./data/traces.json
