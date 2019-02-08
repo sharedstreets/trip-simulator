@@ -111,4 +111,4 @@ trip-simulator is provided under the [MIT License](./LICENSE)
 ## Credits
 
 - [OSRM](https://github.com/Project-OSRM/osrm-backend) is used to generate shortest routes before noise is introduced
-- OD data used to seed trips is pulled from [NYC TLC]()https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+- OD data used to seed trips is pulled from [NYC TLC](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
