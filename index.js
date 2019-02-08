@@ -5,7 +5,7 @@ const OSRM = require("osrm");
 const random = require("random");
 const moment = require("moment");
 
-const osrm = new OSRM("nyc.osrm");
+const osrm = new OSRM("./data/nyc.osrm");
 
 const DRIFT = 0.01;
 const PERIOD = 20;
@@ -19,12 +19,13 @@ process.stdin.pipe(byline.createStream()).pipe(
     if (k % 1000 === 0) console.error(k);
     var line = chunk.toString();
 
-    if (line.length) {
+    if (line.length && k > 1) {
+      // skip header or trailing endline
       var cell = line.split(",");
 
       var record = {
         timeA: moment(cell[1]),
-        timeB: moment(cell[1]),
+        timeB: moment(cell[2]),
         ptA: [+cell[5], +cell[6]],
         ptB: [+cell[9], +cell[10]]
       };
