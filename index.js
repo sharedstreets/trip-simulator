@@ -7,11 +7,12 @@ const moment = require("moment");
 
 const osrm = new OSRM("nyc.osrm");
 
-var DRIFT = 0.01;
-var PERIOD = 20;
+const DRIFT = 0.01;
+const PERIOD = 20;
 var normal = random.normal();
 
 var k = 0;
+
 process.stdin.pipe(byline.createStream()).pipe(
   through2((chunk, enc, next) => {
     k++;
