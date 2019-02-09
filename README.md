@@ -3,7 +3,7 @@ Scripts for generating simulated GPS data from NYC taxi origin/destinations
 
 ## Overview
 
-`trip-simulator` is a tool created by [SharedStreets](sharedstreets.io) for generating simulated raw GPS telemetry. Raw GPS data is highly sensitive, since it can be easily deanonymized and used to track the historical movements of an individual. For this reason, it is difficult to safely develop algorithms for use cases like transit analysis, map matching, or speed profiling without having this data locally available. The SharedStreets trip-simulator uses real open origin destination data from the NYC TLC, combined with synthesized route paths and simulated GPS noise, to create realistically modeled location telemetry. Since the data is fake, there is no privacy risk, and since the noise is plausibly simulated, it can still be used for algorithms that need to operate under real world signal conditions.
+`trip-simulator` is a tool created by [SharedStreets](sharedstreets.io) for generating simulated raw GPS telemetry. Raw GPS data is highly sensitive, since it can be easily deanonymized and used to track the historical movements of an individual. For this reason, it is difficult to safely develop algorithms for use cases like transit analysis, map matching, or speed profiling without having this data locally available. The SharedStreets trip-simulator uses real open pickup/dropoff (aka origin/destination) data from the NYC TLC, combined with synthesized route paths and simulated GPS noise, to create realistically modeled location telemetry. Since the data is fake, there is no privacy risk, and since the noise is plausibly simulated, it can still be used for algorithms that need to operate under real world signal conditions.
 
 ![](https://i.imgur.com/Z1N2Tdj.jpg)
 *1 million trips simulated over NYC*
@@ -65,7 +65,7 @@ Below are the individual steps of the Makefile, useful when modifying configurat
 
 #### trips.csv
 
-Downloads OD data from NYC TLC endpoint.
+Downloads origin/destination data from NYC TLC endpoint.
 
 ```sh
 make trips.csv
