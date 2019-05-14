@@ -16,7 +16,7 @@ var k = 0;
 process.stdin.pipe(byline.createStream()).pipe(
   through2((chunk, enc, next) => {
     k++;
-    if (k % 1000 === 0) console.error(k);
+    if (k % 10000 === 0) console.error(k);
     var line = chunk.toString();
 
     if (line.length && k > 1) {
@@ -51,6 +51,7 @@ process.stdin.pipe(byline.createStream()).pipe(
               );
               var distance = turf.length(overview);
               var duration = result.routes[0].duration;
+
               if (distance > 0) {
                 var trip = [];
                 var timestamps = [];
@@ -78,7 +79,7 @@ process.stdin.pipe(byline.createStream()).pipe(
                 if (trip.length >= 2) {
                   console.log(
                     JSON.stringify(
-                      turf.lineString(trip, { timestamps: timestamps })
+                      turf.lineString(trip, { timestamps: timestamps, speed: Math.round(distance/(duration/60/60)) })
                     )
                   );
                 }
