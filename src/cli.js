@@ -51,9 +51,7 @@ async function main() {
 
   await simulation.setup();
 
-  var stop = new Date().getTime() + 36000000; // 5 hours
-
-  while (simulation.time < stop) {
+  while (iterations--) {
     await simulation.step();
   }
 }
