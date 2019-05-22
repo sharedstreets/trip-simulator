@@ -1,25 +1,29 @@
 {
-  "name": "tlc-fhv",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "trip-simulator",
+  "version": "2.0.0",
+  "description": "A module for generating simulated location telemetry",
+  "main": "src/cli.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "prettier --check --write *.js"
+    "test": "npm run lint",
+    "lint": "prettier --write *.js src/*.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Morgan Herlocker",
+  "license": "MIT",
   "dependencies": {
-    "@mapbox/polyline": "^1.0.0",
+    "@mapbox/tile-cover": "^3.0.2",
+    "@mapbox/tilebelt": "^1.0.1",
     "@turf/turf": "^5.1.6",
     "byline": "^5.0.0",
-    "canvas": "^2.3.1",
+    "chance": "^1.0.18",
+    "minimist": "^1.2.0",
     "moment": "^2.24.0",
+    "osm-pbf-parser": "^2.3.0",
     "osrm": "^5.22.0",
     "random": "^2.0.13",
-    "through2": "^3.0.0"
+    "through2": "^3.0.1"
   },
   "devDependencies": {
-    "prettier": "^1.16.4"
+    "prettier": "^1.16.4",
+    "canvas": "^2.5.0"
   }
 }
