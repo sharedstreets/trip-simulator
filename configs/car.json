@@ -1,0 +1,9 @@
+{
+  "tripDistance": 2,
+  "horizontalAccuracy": 0.01,
+  "frequency": 5000,
+  "serviceDuration": 18000000,
+  "timeToBreakage": 180000000,
+  "idleTimeBetweenTrips": 50000,
+  "distanceBetweenTrips": 0.5
+}
