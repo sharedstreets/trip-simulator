@@ -1,8 +1,13 @@
 const fs = require("fs");
+const path = require("path");
 const through2 = require("through2");
 const byline = require("byline");
 const turf = require("@turf/turf");
 const { createCanvas, loadImage } = require("canvas");
+var argv = require("minimist")(process.argv.slice(2));
+
+const probes = path.join(__dirname, argv.probes);
+const frames = path.join(__dirname, argv.frames);
 
 const bbox = [Infinity, Infinity, -Infinity, -Infinity];
 const w = 1000;
@@ -13,7 +18,7 @@ const ctx = canvas.getContext("2d");
 var now;
 var vehicles = new Map();
 
-fs.createReadStream("./probes.json")
+fs.createReadStream(probes)
   .pipe(byline.createStream())
   .pipe(
     through2((chunk, enc, next) => {
@@ -44,7 +49,7 @@ fs.createReadStream("./probes.json")
 
     var xdiff = bbox[2] - bbox[0];
     var ydiff = bbox[3] - bbox[1];
-    fs.createReadStream("./probes.json")
+    fs.createReadStream(probes)
       .pipe(byline.createStream())
       .pipe(
         through2((chunk, enc, next) => {
@@ -59,7 +64,7 @@ fs.createReadStream("./probes.json")
               ctx.fillStyle = "rgba(0, 0, 0, 0)";
 
               fs.writeFileSync(
-                __dirname + "/frames/" + now + ".png",
+                path.join(frames, now + ".png"),
                 canvas.toBuffer()
               );
 

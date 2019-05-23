@@ -28,6 +28,7 @@ const config = require(path.join(
   __dirname,
   "../configs/" + argv.config + ".json"
 ));
+const quiet = argv.quiet || argv.q;
 const pbf = argv.pbf;
 const graph = argv.graph;
 const agents = argv.agents;
@@ -51,8 +52,20 @@ async function main() {
 
   await simulation.setup();
 
-  while (iterations--) {
+  var i = iterations;
+
+  while (i--) {
+    if (!quiet) {
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
+      process.stdout.write(
+        (((iterations - i) / iterations) * 100).toFixed(2) + "%"
+      );
+    }
     await simulation.step();
+  }
+  if (!quiet) {
+    console.log();
   }
 }
 

@@ -174,7 +174,7 @@ Agent.prototype.route = async function(range) {
     this.start = this.simulation.time;
     this.next = this.simulation.time + this.path.duration * this.speed;
 
-    if(this.trips) {
+    if (this.trips) {
       fs.appendFileSync(
         path.join(__dirname, "../" + this.trips),
         JSON.stringify(
