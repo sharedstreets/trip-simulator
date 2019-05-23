@@ -44,6 +44,20 @@ Agent.prototype.step = async function() {
     await this.place();
 
     // log status_change: available, service_start
+    if (this.changes) {
+      var change = {
+        vehicle_id: this.id,
+        event_time: this.simulation.time,
+        event_type: "available",
+        event_type_reason: "service_start",
+        event_location: turf.point(this.gps())
+      };
+
+      fs.appendFileSync(
+        path.join(__dirname, "../" + this.changes),
+        JSON.stringify(change) + "\n"
+      );
+    }
   } else if (this.status === Status.IDLING) {
     // if idle duration expired, transition to searching
     if (this.simulation.time >= this.next) {
@@ -97,6 +111,20 @@ Agent.prototype.step = async function() {
       this.status = Status.IDLING;
     }
   } else if (this.status === Status.DEACTIVATING) {
+    // log status_change: unavailable, service_end
+    if (this.changes) {
+      var change = {
+        vehicle_id: this.id,
+        event_time: this.simulation.time,
+        event_type: "unavailable",
+        event_type_reason: "service_end",
+        event_location: turf.point(this.gps())
+      };
+      fs.appendFileSync(
+        path.join(__dirname, "../" + this.changes),
+        JSON.stringify(change) + "\n"
+      );
+    }
     // kill agent
   }
 
@@ -174,7 +202,7 @@ Agent.prototype.route = async function(range) {
     this.start = this.simulation.time;
     this.next = this.simulation.time + this.path.duration * this.speed;
 
-    if (this.trips) {
+    if (this.traces) {
       fs.appendFileSync(
         path.join(__dirname, "../" + this.trips),
         JSON.stringify(
