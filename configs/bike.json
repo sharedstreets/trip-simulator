@@ -1,5 +1,5 @@
 {
-  "tripDistance": 0.15,
+  "tripDistance": 2.8,
   "horizontalAccuracy": 0.01,
   "frequency": 5000,
   "serviceDuration": 43200000,

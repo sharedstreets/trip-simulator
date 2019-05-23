@@ -12,10 +12,10 @@ if (argv.help || argv.h || Object.keys(argv).length === 1) {
   help += "--graph       osrm graph file\n";
   help += "--agents      number of agents\n";
   help += "--iterations  number of iterations to simulate\n";
-  help += "--probes      probes output file\n";
-  help += "--traces      traces output file\n";
-  help += "--trips       trips output file\n";
-  help += "--changes     status changes output file\n";
+  help += "--probes      GeoJSON probes output file\n";
+  help += "--traces      GeoJSON traces output file\n";
+  help += "--trips       MDS trips output file\n";
+  help += "--changes     MDS status changes output file\n";
 
   console.log(help);
   process.exit(0);
@@ -34,8 +34,8 @@ const config = require(path.join(
 const quiet = argv.quiet || argv.q;
 const pbf = argv.pbf;
 const graph = argv.graph;
-const agents = argv.agents;
-const iterations = argv.iterations;
+const agents = +argv.agents;
+const iterations = +argv.iterations;
 const probes = argv.probes;
 const traces = argv.traces;
 const trips = argv.trips;
