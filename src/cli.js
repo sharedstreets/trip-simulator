@@ -13,6 +13,7 @@ if (argv.help || argv.h || Object.keys(argv).length === 1) {
   help += "--agents      number of agents\n";
   help += "--iterations  number of iterations to simulate\n";
   help += "--probes      probes output file\n";
+  help += "--traces      traces output file\n";
   help += "--trips       trips output file\n";
   help += "--changes     status changes output file\n";
 
@@ -22,6 +23,8 @@ if (argv.help || argv.h || Object.keys(argv).length === 1) {
   if (!argv.config) throw new Error("specify config");
   if (!argv.pbf) throw new Error("specify pbf");
   if (!argv.graph) throw new Error("specify osrm graph");
+  if (!argv.agents) throw new Error("specify number of agents");
+  if (!argv.iterations) throw new Error("specify number of iterations");
 }
 
 const config = require(path.join(
@@ -34,16 +37,18 @@ const graph = argv.graph;
 const agents = argv.agents;
 const iterations = argv.iterations;
 const probes = argv.probes;
+const traces = argv.traces;
 const trips = argv.trips;
 const changes = argv.changes;
 
 var opts = {
   probes: probes,
+  traces: traces,
   trips: trips,
   changes: changes,
   pbf: pbf,
   graph: graph,
-  agents: 1000,
+  agents: agents,
   step: 1000
 };
 
