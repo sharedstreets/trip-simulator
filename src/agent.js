@@ -7,6 +7,7 @@ const Status = require("./status");
 
 var Agent = function(simulation, opts, config) {
   this.probes = opts.probes;
+  this.traces = opts.traces;
   this.trips = opts.trips;
   this.changes = opts.changes;
   this.simulation = simulation;
@@ -89,7 +90,7 @@ Agent.prototype.step = async function() {
       const range = Math.abs(
         this.simulation.chance.normal({
           mean: this.config.tripDistance,
-          dev: 12
+          dev: 1
         })
       );
 
@@ -204,7 +205,7 @@ Agent.prototype.route = async function(range) {
 
     if (this.traces) {
       fs.appendFileSync(
-        path.join(__dirname, "../" + this.trips),
+        path.join(__dirname, "../" + this.traces),
         JSON.stringify(
           turf.lineString(
             this.path.line.geometry.coordinates.map(c => {
