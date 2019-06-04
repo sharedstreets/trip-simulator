@@ -34,7 +34,7 @@ trip-simulator
 --agents      number of agents
 --iterations  number of iterations to simulate
 --probes      GeoJSON probes output file
---traces      GeoJSON probes output file
+--traces      GeoJSON traces output file
 --trips       MDS trips output file
 --changes     MDS status changes output file
 ```
