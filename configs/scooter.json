@@ -3,7 +3,7 @@
   "horizontalAccuracy": 0.01,
   "frequency": 5000,
   "serviceDuration": 43200000,
-  "timeToBreakage": 86400000,
-  "idleTimeBetweenTrips": 10800000,
+  "timeToBreakage": 183200000,
+  "idleTimeBetweenTrips": 54000000,
   "distanceBetweenTrips": 0
 }

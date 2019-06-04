@@ -14,6 +14,17 @@ var Agent = function(simulation, opts, config) {
   this.config = config;
   this.status = Status.ACTIVATING;
   this.speed = Math.abs(this.simulation.chance.normal({ mean: 1, dev: 0.1 }));
+  this.breakdown =
+    this.simulation.time +
+    Math.abs(
+      config.timeToBreakage * this.simulation.chance.normal({ mean: 1, dev: 1 })
+    );
+  this.shift =
+    this.simulation.time +
+    Math.abs(
+      config.serviceDuration *
+        this.simulation.chance.normal({ mean: 1, dev: 1 })
+    );
   this.id = [
     this.simulation.chance.letter({ casing: "upper" }),
     this.simulation.chance.letter({ casing: "upper" }),
@@ -35,9 +46,11 @@ Agent.prototype.step = async function() {
       this.next =
         this.simulation.time +
         Math.abs(
-          this.simulation.chance.normal({
-            mean: this.config.idleTimeBetweenTrips
-          })
+          this.config.idleTimeBetweenTrips *
+            this.simulation.chance.normal({
+              mean: 1,
+              dev: 1
+            })
         );
     } else this.next = -1;
 
@@ -62,16 +75,50 @@ Agent.prototype.step = async function() {
   } else if (this.status === Status.IDLING) {
     // if idle duration expired, transition to searching
     if (this.simulation.time >= this.next) {
-      this.status = Status.SEARCHING;
+      // if search distance is zero, skip to traveling
+      if (this.config.distanceBetweenTrips > 0) {
+        this.status = Status.SEARCHING;
 
-      // calculate search range
-      const range = Math.abs(
-        this.simulation.chance.normal({
-          mean: this.config.distanceBetweenTrips
-        })
-      );
-      // select search route
-      await this.route(range);
+        // calculate search range
+        const range = Math.abs(
+          this.config.distanceBetweenTrips *
+            this.simulation.chance.normal({
+              mean: 1,
+              dev: 1
+            })
+        );
+        // select search route
+        await this.route(range);
+      } else {
+        this.status = Status.TRAVELING;
+
+        // log status_change: reserved, user_pick_up
+        if (this.changes) {
+          var change = {
+            vehicle_id: this.id,
+            event_time: this.simulation.time,
+            event_type: "reserved",
+            event_type_reason: "user_pick_up",
+            event_location: turf.point(this.gps())
+          };
+          fs.appendFileSync(
+            path.join(__dirname, "../" + this.changes),
+            JSON.stringify(change) + "\n"
+          );
+        }
+
+        // calculate travel range
+        const range = Math.abs(
+          this.config.tripDistance *
+            this.simulation.chance.normal({
+              mean: 1,
+              dev: 1
+            })
+        );
+
+        // select travel route
+        await this.route(range);
+      }
     }
   } else if (this.status === Status.SEARCHING) {
     // set vehicle location by % search route complete
@@ -84,14 +131,30 @@ Agent.prototype.step = async function() {
 
     // if search duration expired, transition to traveling
     if (this.simulation.time >= this.next) {
-      this.status = Status.SEARCHING;
+      this.status = Status.TRAVELING;
+
+      // log status_change: reserved, user_pick_up
+      if (this.changes) {
+        var change = {
+          vehicle_id: this.id,
+          event_time: this.simulation.time,
+          event_type: "reserved",
+          event_type_reason: "user_pick_up",
+          event_location: turf.point(this.gps())
+        };
+        fs.appendFileSync(
+          path.join(__dirname, "../" + this.changes),
+          JSON.stringify(change) + "\n"
+        );
+      }
 
       // calculate travel range
       const range = Math.abs(
-        this.simulation.chance.normal({
-          mean: this.config.tripDistance,
-          dev: 1
-        })
+        this.config.tripDistance *
+          this.simulation.chance.normal({
+            mean: 1,
+            dev: 1
+          })
       );
 
       // select travel route
@@ -101,16 +164,100 @@ Agent.prototype.step = async function() {
     // set vehicle location by % travel route complete
     const progress =
       (this.simulation.time - this.start) / (this.next - this.start);
+
     this.location = turf.along(
       this.path.line,
       progress * this.path.distance
     ).geometry.coordinates;
 
-    // todo: if breakdown triggered, transition to broken
+    // if breakdown triggered, transition to broken
+    if (this.simulation.time >= this.breakdown) {
+      this.status = Status.BROKEN;
+
+      // log status_change: unavailable, maintenance
+      if (this.changes) {
+        var change = {
+          vehicle_id: this.id,
+          event_time: this.simulation.time,
+          event_type: "unavailable",
+          event_type_reason: "maintenance",
+          event_location: turf.point(this.gps())
+        };
+        fs.appendFileSync(
+          path.join(__dirname, "../" + this.changes),
+          JSON.stringify(change) + "\n"
+        );
+      }
+
+      // log trip
+      if (this.trips) {
+        const trip = {
+          vehicle_id: this.id,
+          trip_duration: this.path.duration / 1000,
+          trip_distance: this.path.distance * 1000,
+          start_time: this.start,
+          end_time: this.next,
+          route: turf.featureCollection(
+            this.path.line.geometry.coordinates.map((c, i) => {
+              return turf.point(this.gps(c), {
+                // interpolate timestamp from this.start
+                timestamp: this.start + i * this.simulation.stepSize
+              });
+            })
+          )
+        };
+
+        fs.appendFileSync(
+          path.join(__dirname, "../" + this.trips),
+          JSON.stringify(trip) + "\n"
+        );
+      }
+    }
     // if travel duration expired, transition to idling
     if (this.simulation.time >= this.next) {
       this.status = Status.IDLING;
+
+      // log status_change: available, user_drop_off
+      if (this.changes) {
+        var change = {
+          vehicle_id: this.id,
+          event_time: this.simulation.time,
+          event_type: "available",
+          event_type_reason: "user_drop_off",
+          event_location: turf.point(this.gps())
+        };
+        fs.appendFileSync(
+          path.join(__dirname, "../" + this.changes),
+          JSON.stringify(change) + "\n"
+        );
+      }
+
+      // log trip
+      if (this.trips) {
+        const trip = {
+          vehicle_id: this.id,
+          trip_duration: this.path.duration / 1000,
+          trip_distance: this.path.distance * 1000,
+          start_time: this.start,
+          end_time: this.next,
+          route: turf.featureCollection(
+            this.path.line.geometry.coordinates.map((c, i) => {
+              return turf.point(this.gps(c), {
+                // interpolate timestamp from this.start
+                timestamp: this.start + i * this.simulation.stepSize
+              });
+            })
+          )
+        };
+
+        fs.appendFileSync(
+          path.join(__dirname, "../" + this.trips),
+          JSON.stringify(trip) + "\n"
+        );
+      }
     }
+  } else if (this.status === Status.BROKEN) {
+    // do nothing
   } else if (this.status === Status.DEACTIVATING) {
     // log status_change: unavailable, service_end
     if (this.changes) {
@@ -197,11 +344,15 @@ Agent.prototype.route = async function(range) {
     destination = await this.simulation.snap(destination);
     // route from location to destination
     this.path = await this.simulation.route(this.location, destination);
-    this.path.duration = this.path.duration * 1000;
+    this.path.duration = this.path.duration * this.speed * 1000;
     this.path.line = turf.lineString(this.path.geometry.coordinates);
     this.path.distance = turf.length(this.path.line);
     this.start = this.simulation.time;
-    this.next = this.simulation.time + this.path.duration * this.speed;
+    this.next = this.simulation.time + this.path.duration;
+
+    if (this.path.distance === 0) {
+      return await this.route(range * 1.5);
+    }
 
     if (this.traces) {
       fs.appendFileSync(
@@ -217,6 +368,8 @@ Agent.prototype.route = async function(range) {
       );
     }
   } catch (e) {
+    console.log(e);
+    throw new Error();
     return this.route(range * 1.5);
   }
 };

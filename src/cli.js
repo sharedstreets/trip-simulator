@@ -52,6 +52,8 @@ var opts = {
   step: 1000
 };
 
+var message = "";
+
 async function main() {
   var simulation = new Simulation(opts, config);
 
@@ -61,11 +63,13 @@ async function main() {
 
   while (i--) {
     if (!quiet) {
-      process.stdout.clearLine();
-      process.stdout.cursorTo(0);
-      process.stdout.write(
-        (((iterations - i) / iterations) * 100).toFixed(2) + "%"
-      );
+      const update = (((iterations - i) / iterations) * 100).toFixed(2) + "%";
+      if (update !== message) {
+        message = update;
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
+        process.stdout.write(message);
+      }
     }
     await simulation.step();
   }
