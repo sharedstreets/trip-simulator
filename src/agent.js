@@ -368,8 +368,6 @@ Agent.prototype.route = async function(range) {
       );
     }
   } catch (e) {
-    console.log(e);
-    throw new Error();
     return this.route(range * 1.5);
   }
 };
