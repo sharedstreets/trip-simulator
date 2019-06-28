@@ -1,6 +1,6 @@
 {
   "name": "trip-simulator",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A module for generating simulated location telemetry",
   "bin": "src/cli.js",
   "scripts": {
