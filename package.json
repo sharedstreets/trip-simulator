@@ -2,7 +2,7 @@
   "name": "trip-simulator",
   "version": "2.1.2",
   "description": "A module for generating simulated location telemetry",
-  "bin": "src/cli.js",
+  "bin": "./src/cli.js",
   "scripts": {
     "test": "npm run lint",
     "lint": "prettier --write *.js src/*.js"
