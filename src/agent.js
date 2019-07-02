@@ -1,5 +1,4 @@
 const fs = require("fs");
-const path = require("path");
 const turf = require("@turf/turf");
 const tilebelt = require("@mapbox/tilebelt");
 const cover = require("@mapbox/tile-cover");
@@ -67,10 +66,7 @@ Agent.prototype.step = async function() {
         event_location: turf.point(this.gps())
       };
 
-      fs.appendFileSync(
-        path.join(__dirname, "../" + this.changes),
-        JSON.stringify(change) + "\n"
-      );
+      fs.appendFileSync(this.changes, JSON.stringify(change) + "\n");
     }
   } else if (this.status === Status.IDLING) {
     // if idle duration expired, transition to searching
@@ -101,10 +97,7 @@ Agent.prototype.step = async function() {
             event_type_reason: "user_pick_up",
             event_location: turf.point(this.gps())
           };
-          fs.appendFileSync(
-            path.join(__dirname, "../" + this.changes),
-            JSON.stringify(change) + "\n"
-          );
+          fs.appendFileSync(this.changes, JSON.stringify(change) + "\n");
         }
 
         // calculate travel range
@@ -142,10 +135,7 @@ Agent.prototype.step = async function() {
           event_type_reason: "user_pick_up",
           event_location: turf.point(this.gps())
         };
-        fs.appendFileSync(
-          path.join(__dirname, "../" + this.changes),
-          JSON.stringify(change) + "\n"
-        );
+        fs.appendFileSync(this.changes, JSON.stringify(change) + "\n");
       }
 
       // calculate travel range
@@ -183,10 +173,7 @@ Agent.prototype.step = async function() {
           event_type_reason: "maintenance",
           event_location: turf.point(this.gps())
         };
-        fs.appendFileSync(
-          path.join(__dirname, "../" + this.changes),
-          JSON.stringify(change) + "\n"
-        );
+        fs.appendFileSync(this.changes, JSON.stringify(change) + "\n");
       }
 
       // log trip
@@ -207,10 +194,7 @@ Agent.prototype.step = async function() {
           )
         };
 
-        fs.appendFileSync(
-          path.join(__dirname, "../" + this.trips),
-          JSON.stringify(trip) + "\n"
-        );
+        fs.appendFileSync(this.trips, JSON.stringify(trip) + "\n");
       }
     }
     // if travel duration expired, transition to idling
@@ -226,10 +210,7 @@ Agent.prototype.step = async function() {
           event_type_reason: "user_drop_off",
           event_location: turf.point(this.gps())
         };
-        fs.appendFileSync(
-          path.join(__dirname, "../" + this.changes),
-          JSON.stringify(change) + "\n"
-        );
+        fs.appendFileSync(this.changes, JSON.stringify(change) + "\n");
       }
 
       // log trip
@@ -250,10 +231,7 @@ Agent.prototype.step = async function() {
           )
         };
 
-        fs.appendFileSync(
-          path.join(__dirname, "../" + this.trips),
-          JSON.stringify(trip) + "\n"
-        );
+        fs.appendFileSync(this.trips, JSON.stringify(trip) + "\n");
       }
     }
   } else if (this.status === Status.BROKEN) {
@@ -268,10 +246,7 @@ Agent.prototype.step = async function() {
         event_type_reason: "service_end",
         event_location: turf.point(this.gps())
       };
-      fs.appendFileSync(
-        path.join(__dirname, "../" + this.changes),
-        JSON.stringify(change) + "\n"
-      );
+      fs.appendFileSync(this.changes, JSON.stringify(change) + "\n");
     }
     // kill agent
   }
@@ -283,10 +258,7 @@ Agent.prototype.step = async function() {
       time: this.simulation.time,
       status: String(this.status).slice(7, -1)
     });
-    fs.appendFileSync(
-      path.join(__dirname, "../" + this.probes),
-      JSON.stringify(probe) + "\n"
-    );
+    fs.appendFileSync(this.probes, JSON.stringify(probe) + "\n");
   }
 };
 
@@ -356,7 +328,7 @@ Agent.prototype.route = async function(range) {
 
     if (this.traces) {
       fs.appendFileSync(
-        path.join(__dirname, "../" + this.traces),
+        this.traces,
         JSON.stringify(
           turf.lineString(
             this.path.line.geometry.coordinates.map(c => {

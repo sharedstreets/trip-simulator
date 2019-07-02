@@ -1,5 +1,4 @@
 const fs = require("fs");
-const path = require("path");
 const through2 = require("through2");
 const parser = require("osm-pbf-parser");
 const turf = require("@turf/turf");
@@ -37,7 +36,7 @@ Simulation.prototype.setup = async function() {
     var parse = parser();
 
     // build node store
-    fs.createReadStream(path.join(__dirname, "../" + this.pbf))
+    fs.createReadStream(this.pbf)
       .pipe(parse)
       .pipe(
         through2.obj((items, enc, next) => {
@@ -51,7 +50,7 @@ Simulation.prototype.setup = async function() {
       )
       .on("finish", () => {
         parse = parser();
-        fs.createReadStream(path.join(__dirname, "../" + this.pbf))
+        fs.createReadStream(this.pbf)
           .pipe(parse)
           .pipe(
             through2.obj((items, enc, next) => {
