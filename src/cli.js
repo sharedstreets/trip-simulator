@@ -13,7 +13,8 @@ if (argv.help || argv.h || Object.keys(argv).length === 1) {
   help += "--pbf         osm.pbf file\n";
   help += "--graph       osrm graph file\n";
   help += "--agents      number of agents\n";
-  help += "--iterations  number of iterations to simulate\n";
+  help += "--start       start time in epoch milliseconds\n";
+  help += "--seconds     number of seconds to simulate\n";
   help += "--probes      GeoJSON probes output file\n";
   help += "--traces      GeoJSON traces output file\n";
   help += "--trips       MDS trips output file\n";
@@ -26,7 +27,8 @@ if (argv.help || argv.h || Object.keys(argv).length === 1) {
   if (!argv.pbf) throw new Error("specify pbf");
   if (!argv.graph) throw new Error("specify osrm graph");
   if (!argv.agents) throw new Error("specify number of agents");
-  if (!argv.iterations) throw new Error("specify number of iterations");
+  if (!argv.start) throw new Error("specify start time");
+  if (!argv.seconds) throw new Error("specify number of seconds");
 }
 
 const config = require(path.join(
@@ -37,7 +39,8 @@ const quiet = argv.quiet || argv.q;
 const pbf = argv.pbf;
 const graph = argv.graph;
 const agents = +argv.agents;
-const iterations = +argv.iterations;
+const start = +argv.seconds;
+const seconds = +argv.seconds;
 const probes = argv.probes;
 const traces = argv.traces;
 const trips = argv.trips;
@@ -51,7 +54,7 @@ var opts = {
   pbf: pbf,
   graph: graph,
   agents: agents,
-  step: 1000
+  start: start
 };
 
 var message = "";
@@ -61,11 +64,11 @@ async function main() {
 
   await simulation.setup();
 
-  var i = iterations;
+  var i = seconds;
 
   while (i--) {
     if (!quiet) {
-      const update = (((iterations - i) / iterations) * 100).toFixed(2) + "%";
+      const update = (((seconds - i) / seconds) * 100).toFixed(2) + "%";
       if (update !== message) {
         message = update;
         process.stdout.clearLine();
