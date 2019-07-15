@@ -72,7 +72,7 @@ trip-simulator \
   --pbf nash.osm.pbf \
   --graph nash.osrm \
   --agents 100 \
-  --start 1563122921 \
+  --start 1563122921000 \
   --seconds 86400 \
   --traces ./traces.json \
   --probes ./probes.json \
