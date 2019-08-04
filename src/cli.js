@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const readline = require('readline');
 const path = require("path");
 const Simulation = require("./simulation");
 var argv = require("minimist")(process.argv.slice(2));
@@ -71,8 +72,8 @@ async function main() {
       const update = (((seconds - i) / seconds) * 100).toFixed(2) + "%";
       if (update !== message) {
         message = update;
-        process.stdout.clearLine();
-        process.stdout.cursorTo(0);
+        readline.clearLine(process.stdout)
+        readline.cursorTo(process.stdout, 0)
         process.stdout.write(message);
       }
     }
