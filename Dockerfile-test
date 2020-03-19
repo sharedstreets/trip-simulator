@@ -1,0 +1,47 @@
+FROM node:11
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    osmium-tool \
+  && rm -rf /var/lib/apt/lists/* /tmp/*
+
+# Prepare OSM input files
+RUN curl https://s3.amazonaws.com/metro-extracts.nextzen.org/nashville_tennessee.osm.pbf -o nashville.osm.pbf \
+    && osmium extract -b "-86.84881,36.12262,-86.73688,36.20494" nashville.osm.pbf -o ./nash.osm.pbf -s "complete_ways" --overwrite \
+    && rm nashville.osm.pbf \
+    && ls -la *.osm.pbf
+
+# Copy source code to Docker image
+COPY . /trip-simulator/
+RUN ls -la /trip-simulator/src/*
+
+
+WORKDIR /trip-simulator
+RUN npm install
+
+WORKDIR /trip-simulator/data
+
+# Build OSRM data
+RUN cp  /nash.osm.pbf .
+RUN /trip-simulator/node_modules/osrm/lib/binding/osrm-extract \
+        ./nash.osm.pbf \
+        -p /trip-simulator/node_modules/osrm/profiles/foot.lua
+RUN /trip-simulator/node_modules/osrm/lib/binding/osrm-contract ./nash.osrm
+
+# Start simulator
+RUN mkdir -p ./result \
+  && node /trip-simulator/src/cli.js \
+  --config scooter \
+  --pbf nash.osm.pbf \
+  --graph nash.osrm \
+  --agents 20 \
+  --start 1563122921000 \
+  --seconds 36000 \
+  --traces ./result/traces.json \
+  --probes ./result/probes.json \
+  --changes ./result/changes.json \
+  --trips ./result/trips.json
+
+# List "result" files ..
+RUN ls -la
+RUN ls -la ./result/*

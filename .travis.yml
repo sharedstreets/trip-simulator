@@ -1,0 +1,14 @@
+sudo: required
+
+dist: trusty
+
+language: bash
+
+services:
+  - docker
+
+before_install:
+  - docker -v
+
+script:
+  - docker build -t dev-trip-simulator -f Dockerfile-test .
